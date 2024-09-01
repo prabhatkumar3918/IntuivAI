@@ -11,6 +11,11 @@ from oauth import get_current_user
 import logging
 from fastapi.security import OAuth2PasswordBearer
 from jwttoken import verify_token   
+from tts import TextToSpeech
+from vtt import VoiceToText
+from cv_text_extract import CVTextExtractor
+from llm import LLMProcessor
+import uuid
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -36,6 +41,7 @@ logger = logging.getLogger(__name__)
 mongodb_uri = 'mongodb+srv://dangerousdan8888:tqHt0OscZIMz8U3A@cluster0.6vvo7.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0'
 client = MongoClient(mongodb_uri)
 db = client["User"]
+print(db)
 
 # Pydantic models
 class User(BaseModel):
@@ -53,6 +59,48 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: Optional[str] = None
+
+class InterviewRequest(BaseModel):
+    user_id: str
+    cv_path: str
+    job_description: str
+
+class InterviewApp:
+    def __init__(self, cohere_api_key):
+        self.text_to_speech = TextToSpeech()
+        self.voice_to_text = VoiceToText()
+        self.cv_extractor = CVTextExtractor()
+        self.llm_processor = LLMProcessor()
+        self.llm_processor.initialize_llm(cohere_api_key)
+
+    def run_interview(self, user_id, cv_path, job_description):
+        # Extract text from CV
+        cv_text = self.cv_extractor.extract_text(cv_path)
+        
+        # Setup the conversation chain with CV text and job description
+        self.llm_processor.setup_conversation_chain(cv_text, job_description)
+
+        print("Starting the interview...\n")
+        # Start the interview and get the initial greeting or question
+        first_question = self.llm_processor.ask_question("Please begin the interview.")
+        self.text_to_speech.speak_text(first_question)
+        print("LLM:", first_question)
+
+        while True:
+            # Convert user response to text
+            user_response = self.voice_to_text.recognize_speech()
+            print("User Response:", user_response)
+
+            # Check for exit commands
+            if user_response.lower() in ['end', 'exit']:
+                print(f"Ending interview session for user {user_id}.")
+                break
+
+            # Generate the next question based on the user's response
+            next_question = self.llm_processor.ask_question(user_response)
+            self.text_to_speech.speak_text(next_question)
+            print("LLM:", next_question)
+
 
 # Root endpoint
 @app.get("/")
@@ -145,3 +193,39 @@ def verify_token_endpoint(token: str = Depends(oauth2_scheme)):
         return JSONResponse(content={"message": "Token is valid"}, status_code=status.HTTP_200_OK)
     except HTTPException:
         return JSONResponse(content={"message": "Invalid token"}, status_code=status.HTTP_401_UNAUTHORIZED)
+    
+
+@app.post("/run-interview")
+def run_interview(request: InterviewRequest, current_user: User = Depends(get_current_user)):
+    try:
+        # Ensure that only authenticated users can run interviews
+        logger.info(f"Starting interview for user ID: {request.user_id}")
+
+        # Initialize the InterviewApp (LLMProcessor) with the necessary API key
+        cohere_api_key = "MvISiDVtjUD1qkhxysW3bYVLwbCwOnnlUcZDXynD"
+        interview_app = LLMProcessor()
+
+        # Generate a unique session ID
+        session_id = str(uuid.uuid4())
+
+        # Initialize the LLM and prepare the interview questions, storing them in Redis
+        n = 70  # Example: 70% technical, 30% non-technical
+        num_questions = 10  # Example: Total 10 questions
+        interview_app.initialize_llm(
+            cohere_api_key=cohere_api_key,
+            n=n,
+            num_questions=num_questions,
+            cv_text=request.cv_path,
+            job_description=request.job_description,
+            session_id=session_id
+        )
+
+        # Start the interview process
+        interview_app.conduct_interview(session_id)
+
+        logger.info(f"Interview session ended for user ID: {request.user_id}")
+        return {"message": "Interview session completed successfully."}
+
+    except Exception as e:
+        logger.error(f"Error during interview session: {e}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="An error occurred during the interview session")
