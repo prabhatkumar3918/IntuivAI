@@ -16,6 +16,7 @@ from vtt import VoiceToText
 from cv_text_extract import CVTextExtractor
 from llm import LLMProcessor
 import uuid
+import json
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -66,41 +67,20 @@ class InterviewRequest(BaseModel):
     job_description: str
 
 class InterviewApp:
-    def __init__(self, cohere_api_key):
-        self.text_to_speech = TextToSpeech()
-        self.voice_to_text = VoiceToText()
+    def __init__(self):
         self.cv_extractor = CVTextExtractor()
-        self.llm_processor = LLMProcessor()
-        self.llm_processor.initialize_llm(cohere_api_key)
-
-    def run_interview(self, user_id, cv_path, job_description):
-        # Extract text from CV
-        cv_text = self.cv_extractor.extract_text(cv_path)
+        self.llm_processor = LLMProcessor() 
         
-        # Setup the conversation chain with CV text and job description
-        self.llm_processor.setup_conversation_chain(cv_text, job_description)
-
+    def run_interview(self, cohere_api_key, user_id, cv_path, job_description, num_questions):
+        cv_text = self.cv_extractor.extract_text(cv_path)
+        self.llm_processor.initialize_llm(cohere_api_key=cohere_api_key)
+        session_id = self.llm_processor.generate_questions(num_questions, cv_text, job_description, user_id)
+        
         print("Starting the interview...\n")
-        # Start the interview and get the initial greeting or question
-        first_question = self.llm_processor.ask_question("Please begin the interview.")
-        self.text_to_speech.speak_text(first_question)
-        print("LLM:", first_question)
-
-        while True:
-            # Convert user response to text
-            user_response = self.voice_to_text.recognize_speech()
-            print("User Response:", user_response)
-
-            # Check for exit commands
-            if user_response.lower() in ['end', 'exit']:
-                print(f"Ending interview session for user {user_id}.")
-                break
-
-            # Generate the next question based on the user's response
-            next_question = self.llm_processor.ask_question(user_response)
-            self.text_to_speech.speak_text(next_question)
-            print("LLM:", next_question)
-
+        questions_list = json.loads(self.llm_processor.redis_client.get(session_id))
+        print(f"Questions for session {session_id}:")
+        for question in questions_list['questions']:
+            print(question)
 
 # Root endpoint
 @app.get("/")
@@ -203,25 +183,18 @@ def run_interview(request: InterviewRequest, current_user: User = Depends(get_cu
 
         # Initialize the InterviewApp (LLMProcessor) with the necessary API key
         cohere_api_key = "MvISiDVtjUD1qkhxysW3bYVLwbCwOnnlUcZDXynD"
-        interview_app = LLMProcessor()
+        interview_app = InterviewApp()
 
         # Generate a unique session ID
         session_id = str(uuid.uuid4())
-
-        # Initialize the LLM and prepare the interview questions, storing them in Redis
-        n = 70  # Example: 70% technical, 30% non-technical
-        num_questions = 10  # Example: Total 10 questions
-        interview_app.initialize_llm(
+        num_questions = 10  
+        interview_app.run_interview(
             cohere_api_key=cohere_api_key,
-            n=n,
-            num_questions=num_questions,
-            cv_text=request.cv_path,
+            user_id=request.user_id,
+            cv_path=request.cv_path,
             job_description=request.job_description,
-            session_id=session_id
+            num_questions=num_questions
         )
-
-        # Start the interview process
-        interview_app.conduct_interview(session_id)
 
         logger.info(f"Interview session ended for user ID: {request.user_id}")
         return {"message": "Interview session completed successfully."}
