@@ -11,18 +11,15 @@ class VoiceInterview:
         self.vtt = VoiceToText()
 
     def get_questions_from_redis(self, session_id):
-        # Fetch the list of questions from Redis
         questions_json = self.redis_client.get(session_id)
         if questions_json:
             return json.loads(questions_json)
         return []
 
     def ask_question(self, question):
-        # Use TextToSpeech to ask the question
         self.tts.speak_text(question)
 
     def listen_response(self):
-        # Use VoiceToText to listen for the user's response
         response_text = self.vtt.recognize_speech()
         print(f"User's response: {response_text}")
         return response_text
@@ -52,6 +49,6 @@ class VoiceInterview:
             else:
                 responses.append({"question": q['question'], "response": response})
 
-        # Store the user's responses in Redis
-        self.redis_client.set(f"{session_id}_responses", json.dumps(responses))
+        #self.redis_client.set(f"{session_id}_responses", json.dumps(responses))
+        print(responses)
         print("Interview completed. Responses saved.")

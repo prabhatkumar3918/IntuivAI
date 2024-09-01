@@ -1,10 +1,9 @@
 import cohere
 
-# Set up the Cohere client with your API key
+#  API key
 cohere_api_key = "MvISiDVtjUD1qkhxysW3bYVLwbCwOnnlUcZDXynD"
 co = cohere.Client(cohere_api_key)
 
-# Default examples used for creating the prompt
 default_examples = [
     {
         "question": "What is dimensionality reduction, and why is it important in machine learning?",
@@ -44,7 +43,6 @@ default_examples = [
 ]
 
 def create_prompt(examples, input_question, input_answer):
-    # Create a prompt with the given examples and dynamic question-answer pair
     prompt = '''I am a virtual interview bot. Below are some examples of technical interview questions, 
     the candidate's responses, and the follow-up questions I should ask.\n\n'''
     
@@ -61,9 +59,8 @@ def create_prompt(examples, input_question, input_answer):
     
     return prompt
 
-# Function to generate follow-up questions
+# generate follow-up questions
 def generate_follow_up_question(question, answer):
-    # Use the default examples or allow dynamic examples if passed in
     prompt = create_prompt(default_examples, question, answer)
     
     response = co.generate(
