@@ -1,0 +1,142 @@
+.scroller {
+    position: relative;
+    /* z-index: 20; */
+    max-width: 100%;
+    overflow: hidden;
+    /* mask-image: linear-gradient(to right, transparent, white 20%, white 80%, transparent); */
+  }
+  
+  .scrollerList {
+    display: flex;
+    min-width: 100%;
+    gap: 4px;
+    padding: 4px;
+    width: max-content;
+    flex-wrap: nowrap;
+  }
+  
+  .animateScroll {
+    animation: scroll 100s linear infinite;
+  }
+  
+  .pauseOnHover:hover {
+    animation-play-state: paused;
+  }
+  
+  .card {
+    width: 300px;
+    max-width: 100%;
+    border: 1px solid #333;
+    border-bottom: 0;
+    flex-shrink: 0;
+    padding: 8px 16px;
+    border-radius: 10px;
+    background: #41295a;  /* fallback for old browsers */
+background: -webkit-linear-gradient(to right, rgb(59, 9, 128), rgb(59, 9, 128));  /* Chrome 10-25, Safari 5.1-6 */
+background: linear-gradient(to top, rgb(59, 9, 128), #41295a); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+    margin: 0.5rem;
+    /* background-color: rgb(0, 0, 0); */
+    /* background-color: #f7f7f7; */
+  }
+  
+  .cardBackground {
+    position: absolute;
+    top: -0.5px;
+    left: -0.5px;
+    width: calc(100% + 4px);
+    height: calc(100% + 4px);
+    background-color: transparent;
+    z-index: -1;
+    pointer-events: none;
+  }
+  
+  .quote {
+    font-size: 0.8rem;
+    line-height: 1;
+    color: white;
+    font-weight: 400;
+  }
+  
+  .authorInfo {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1.6rem;
+  }
+  
+  .authorName {
+    font-size: 1rem;
+    line-height: 1.6;
+    font-weight: 400;
+    color: aliceblue;
+  }
+  
+  .authorTitle {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: white;
+    font-weight: 400;
+  }
+  
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+  
+  .scrollerList li {
+    list-style: none;
+    font-size: 1rem;
+    /* background-color: linear-gradient(180deg, var(white), var(blue)); */
+  }
+  
+  .scrollerList li:last-child {
+    margin-right: 0;
+  }
+  
+  .scrollerList li:first-child {
+    margin-left: 0;
+  }
+  
+  .card:hover {
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  }
+  
+  .card:active {
+    transform: scale(0.95);
+  }
+  
+  .card:focus {
+    outline: none;
+    box-shadow: 0 0 10px rgba(255, 234, 234, 0.2);
+  }
+  
+  @media (max-width: 768px) {
+    .scroller {
+      max-width: 100%;
+    }
+    .card {
+      width: 100%;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .scroller {
+      max-width: 100%;
+    }
+    .card {
+      width: 100%;
+    }
+    .authorInfo {
+      flex-direction: column;
+    }
+    .authorName {
+      font-size: 1rem;
+    }
+    .authorTitle {
+      font-size: 0.9rem;
+    }
+  }

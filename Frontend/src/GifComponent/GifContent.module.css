@@ -1,0 +1,42 @@
+.sectionWithGif {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .textContainer {
+    flex: 1;
+    padding: 20px;
+    font-size: 1.2em;
+    line-height: 1.6;
+  }
+  
+  .textContainer h2 {
+    font-size: 2em;
+    margin-bottom: 20px;
+  }
+  
+  .gifContainer {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1000px;
+  }
+  
+  .slantedGif {
+    width: 80%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: transparent;
+  }
+  
+  .hidden {
+    opacity: 0;
+    transform: translateY(2rem);
+    transition: opacity 1s ease-out, transform 1s ease-out;
+  }
+  
+  .show {
+    opacity: 1;
+    transform: translateY(0);
+  }

@@ -1,0 +1,95 @@
+.footer {
+    background-color: #111;
+    color: #fff;
+    /* padding: 4px 0; */
+    width: 100%;
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    /* padding: 0 15px; */
+  }
+  
+  .footerContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .footerLogo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .footerLogo img {
+    width: 100px;
+    height: auto;
+    margin-bottom: 15px;
+  }
+  
+  .copyright {
+    font-size: 14px;
+  }
+  
+  .footerLinks {
+    width: 60%;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .footerLinksGroup {
+    display: flex;
+    flex-direction: column;
+    margin: 10px 15px 10px 15px;
+  }
+  
+  .footerLinksTitle {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+  
+  .footerLinks ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .footerLinks li {
+    margin-bottom: 10px;
+  }
+  
+  .footerLinks a {
+    color: #fff;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+  
+  .footerLinks a:hover {
+      color: #f0f0f0;
+    }
+    
+  .company {
+    text-align: center;
+    width: 100%;
+    }
+    
+.companyName {
+  font-size: 10rem;
+  font-weight:bold;
+  color: #c9deff;
+  text-align: center;
+  background-image: linear-gradient(
+      270deg, 
+      var(--token-5ed0f6de-c6b5-42b7-b2d5-92798026d968, rgb(111, 17, 242)) 0%, 
+      rgb(210, 181, 251) 45%, 
+      var(--token-a83cc714-a7b3-4592-8045-1428c2e6a6b0, rgb(242, 240, 245)) 49%
+    );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin:4rem;
+  opacity: 0.4;
+  }
