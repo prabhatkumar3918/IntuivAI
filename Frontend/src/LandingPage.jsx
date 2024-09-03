@@ -85,11 +85,11 @@ const App = () => {
       <div className={styles.background}>
         {/* Add your background image here */}
       </div>
-      <GifContent isOdd gifUrl={gif1} heading={heading1} text={text1} content_btn="Schedule Interview" btn_redirect_path = "/"/>
+      <GifContent isOdd gifUrl={gif1} heading={heading1} text={text1} content_btn="Schedule Interview" btn_redirect_path = "/login"/>
       <Separator text={"PITCH TO AI"} isLine />
-      <GifContent gifUrl={gif2} heading={heading2} text={text2} content_btn="Pitch Yourself" btn_redirect_path = "/"/>
+      <GifContent gifUrl={gif2} heading={heading2} text={text2} content_btn="Pitch Yourself" btn_redirect_path = "/login"/>
       <Separator text={"BUILD YOUR CV"} isLine />
-      <GifContent isOdd gifUrl={gif3} heading={heading3} text={text3} content_btn= "Resume Builder" btn_redirect_path = "/"/>
+      <GifContent isOdd gifUrl={gif3} heading={heading3} text={text3} content_btn= "Resume Builder" btn_redirect_path = "/login"/>
       <div className={styles.waves_container}>
         <img className={styles.waves_svg} decoding='async' sizes='max(min(max(100vw - 80px, 1px), 1240px), 1px)' src="https://framerusercontent.com/images/0u6l44awKqCuWyLB7UcK30qEM.png?scale-down-to=1024" alt="Illustration" />
       </div>

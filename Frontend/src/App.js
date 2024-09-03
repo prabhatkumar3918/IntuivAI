@@ -5,6 +5,7 @@ import Login from "./Login/Login";
 import Signup from "./SignUp/Signup";
 import axios from "axios";
 
+
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(true); // Handle authenticated state
   const [loading, setLoading] = useState(true); // Loading state while checking authentication
@@ -60,7 +61,7 @@ const App = () => {
         />
         <Route 
           path="/dashboard" 
-          element={isAuthenticated ? <LandingPage /> : <Navigate to="/login" />} 
+          element={isAuthenticated ? <LandingPage />  : <Navigate to="/login" />} 
         />
       </Routes>
     </BrowserRouter>

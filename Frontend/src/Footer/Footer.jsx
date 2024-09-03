@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './Footer.module.css';
+import logo from '../assets/logo.png'
 
 const Footer = () => {
   return (
@@ -8,10 +9,10 @@ const Footer = () => {
         <div className={styles.footerContent}>
           <div className={styles.footerLogo}>
             <a href="/">
-              <img src="/logo.svg" alt="DevStudio Logo" />
+              <img src={logo} alt="DevStudio Logo" />
             </a>
             <p className={styles.copyright}>
-              &copy; copyright DevStudios 2024. All rights reserved.
+              &copy; copyright Intuiv.ai 2024. All rights reserved.
             </p>
           </div>
           <div className={styles.footerLinks}>
@@ -87,7 +88,7 @@ const Footer = () => {
         </div>
       </div>
       <div className={styles.company}>
-        <p className={styles.companyName}>SAARTH AI</p>
+        <p className={styles.companyName}>INTUIV AI</p>
       </div>
     </footer>
   );

@@ -26,7 +26,7 @@ const Navbar = () => {
               />
 
             </div>
-            <div className={styles.logo_text}>saarth.ai</div>
+            <div className={styles.logo_text}>Intuiv.ai</div>
           </a>
         </div>
         <div className={styles.nav_links}>
