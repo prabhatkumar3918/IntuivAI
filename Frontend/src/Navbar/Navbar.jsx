@@ -38,12 +38,12 @@ const Navbar = () => {
           {/* <a href="https://twitter.com/openservai" target="_blank" rel="noopener">
             <img src={twitterIcon} alt="Twitter" />
           </a> */}
-          <a href="https://docsend.com/view/dw4av83vyuhn4pta" target="_blank" rel="noopener">
+          <a href="/login" rel="noopener">
             {/* Insert whitepaper icon here */}
             <div className={styles.whitepaper_label}>Login</div>
             {/* Insert arrow icon here */}
           </a>
-          <a href="https://docsend.com/view/dw4av83vyuhn4pta" target="_blank" rel="noopener">
+          <a href="/signup"  rel="noopener">
             {/* Insert whitepaper icon here */}
             <div className={styles.whitepaper_label}>Sign up</div>
             {/* Insert arrow icon here */}
