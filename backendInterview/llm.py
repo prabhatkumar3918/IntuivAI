@@ -23,6 +23,7 @@ class LLMProcessor:
         1. Analyze the CV and job description provided below to understand the context.
         2. Formulate questions that are directly relevant to the user's past projects, experiences, competitions, skills, and other aspects of the CV.
         3. Ask the questions in a clear and concise manner.
+        4. The response should only contain the questions, formatted as a numbered list.
         
         Current CV:
         {cv_text}
@@ -33,21 +34,22 @@ class LLMProcessor:
         Your questions (only the questions, no additional text or remarks):
         """
 
-        prompt = f"Generate {num_questions} different questions based on the CV and job description.\n{template}"
+        prompt = f"Generate {num_questions} different questions based on the CV and job description.\n{template}\nFormat your response as:\n1. Question one\n2. Question two\n... and so on."
         
         # Call the LLM to generate the questions
         response = self.llm(prompt)
         print("LLM Response:\n", response)
         
         # Process and store the response in Redis
-        self.store_response_in_redis(response, user_id)
+        session_id=self.store_response_in_redis(response, user_id)
+        return session_id
     
     def store_response_in_redis(self, response, user_id):
         # Generate a unique key for this user's session
         session_id = str(uuid.uuid4())
         
         # Parse the response into a list of questions
-        questions_list = response.split('\n')
+        questions_list = response#.split('\n')
         
         # Prepare the data structure to store in Redis
         data = {

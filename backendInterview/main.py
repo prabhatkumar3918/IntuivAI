@@ -78,9 +78,10 @@ class InterviewApp:
         
         print("Starting the interview...\n")
         questions_list = json.loads(self.llm_processor.redis_client.get(session_id))
-        print(f"Questions for session {session_id}:")
-        for question in questions_list['questions']:
-            print(question)
+        print(questions_list)
+        #print(f"Questions for session {session_id}:")
+        #for question in questions_list['questions']:
+            #print(question)
 
 # Root endpoint
 @app.get("/")
