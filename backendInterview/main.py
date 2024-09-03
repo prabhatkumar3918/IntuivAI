@@ -17,6 +17,7 @@ from cv_text_extract import CVTextExtractor
 from llm import LLMProcessor
 import uuid
 import json
+from uvr import VoiceInterview
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -82,6 +83,7 @@ class InterviewApp:
         #print(f"Questions for session {session_id}:")
         #for question in questions_list['questions']:
             #print(question)
+        return session_id
 
 # Root endpoint
 @app.get("/")
@@ -189,14 +191,15 @@ def run_interview(request: InterviewRequest, current_user: User = Depends(get_cu
         # Generate a unique session ID
         session_id = str(uuid.uuid4())
         num_questions = 10  
-        interview_app.run_interview(
+        session_id = interview_app.run_interview(
             cohere_api_key=cohere_api_key,
             user_id=request.user_id,
             cv_path=request.cv_path,
             job_description=request.job_description,
             num_questions=num_questions
         )
-
+        voice_interview = VoiceInterview()
+        voice_interview.conduct_interview(session_id)
         logger.info(f"Interview session ended for user ID: {request.user_id}")
         return {"message": "Interview session completed successfully."}
 

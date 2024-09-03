@@ -16,7 +16,7 @@ class VoiceToText:
         # Recognize speech from the given audio source with support for the Indian accent
         if audio_source is None:
             with self.microphone as source:
-                audio = self.recognizer.listen(source,timeout=10, phrase_time_limit=5)
+                audio = self.recognizer.listen(source,timeout=10, phrase_time_limit=30)
         else:
             audio = audio_source
         

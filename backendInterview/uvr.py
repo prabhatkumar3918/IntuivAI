@@ -31,23 +31,26 @@ class VoiceInterview:
             return
 
         responses = []
+        print(f"questions are : {questions['questions']}")
+        questions=questions['questions'].split('?')
         for q in questions:
-            self.ask_question(q['question'])
+            print(f"Interviewer : {q}")
+            self.ask_question(q)
             response = self.listen_response()
 
             # Generate and ask follow-up question
-            follow_up_question = generate_follow_up_question(q['question'], response)
+            follow_up_question = generate_follow_up_question(q, response)
             if follow_up_question:
                 self.ask_question(follow_up_question)
                 follow_up_response = self.listen_response()
                 responses.append({
-                    "question": q['question'], 
+                    "question": q, 
                     "response": response, 
                     "follow_up_question": follow_up_question, 
                     "follow_up_response": follow_up_response
                 })
             else:
-                responses.append({"question": q['question'], "response": response})
+                responses.append({"question": q, "response": response})
 
         #self.redis_client.set(f"{session_id}_responses", json.dumps(responses))
         print(responses)
