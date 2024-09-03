@@ -1,7 +1,7 @@
 import React from 'react';
-import gif1 from './assets/AI Video (1).gif'
-import gif2 from './assets/user 1 (1).gif'
-import gif3 from './assets/Maria Tar (1).gif'
+import gif1 from './assets/AI Video (2).gif'
+import gif2 from './assets/user 1 (2).gif'
+import gif3 from './assets/Maria Tar (2).gif'
 import styles from './LandingPage.module.css';
 import Separator from './Separator/Separator';
 import GifContent from './GifComponent/GifContent';
