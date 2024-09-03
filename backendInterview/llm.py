@@ -41,8 +41,13 @@ class LLMProcessor:
         print("LLM Response:\n", response)
         
         # Process and store the response in Redis
+<<<<<<< HEAD
+        
+        self.store_response_in_redis(response, user_id)
+=======
         session_id=self.store_response_in_redis(response, user_id)
         return session_id
+>>>>>>> 0d8ac3de40ace01fefaf6281bcf8b68efa5cd8b1
     
     def store_response_in_redis(self, response, user_id):
         # Generate a unique key for this user's session
