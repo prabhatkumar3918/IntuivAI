@@ -4,7 +4,7 @@ import LandingPage from "./LandingPage";
 import Login from "./Login/Login";
 import Signup from "./SignUp/Signup";
 import axios from "axios";
-
+import VideoCallWithAI from "./VideoCallWIthAI";
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(true); // Handle authenticated state
@@ -62,6 +62,10 @@ const App = () => {
         <Route 
           path="/dashboard" 
           element={isAuthenticated ? <LandingPage />  : <Navigate to="/login" />} 
+        />
+        <Route 
+          path="/video" 
+          element={isAuthenticated ? <LandingPage />  : <VideoCallWithAI />} 
         />
       </Routes>
     </BrowserRouter>
