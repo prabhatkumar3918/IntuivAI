@@ -40,6 +40,7 @@ class LLMProcessor:
         print("LLM Response:\n", response)
         
         # Process and store the response in Redis
+        
         self.store_response_in_redis(response, user_id)
     
     def store_response_in_redis(self, response, user_id):

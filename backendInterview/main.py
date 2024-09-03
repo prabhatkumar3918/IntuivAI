@@ -95,6 +95,7 @@ def create_user(request: User):
         
         # Check if the username already exists
         existing_user = db["users"].find_one({"username": request.username})
+        logger.info(f"hash")
         if existing_user:
             logger.warning(f"User already exists with username: {request.username}")
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=f'Username already exists: {request.username}')
@@ -131,7 +132,7 @@ def create_user(request: User):
 def login(request: Login):
     try:
         logger.info(f"Login attempt for username: {request.username}")
-        
+        print(db["users"])
         # Find user in the database
         user = db["users"].find_one({"username": request.username})
         if not user:
@@ -202,3 +203,7 @@ def run_interview(request: InterviewRequest, current_user: User = Depends(get_cu
     except Exception as e:
         logger.error(f"Error during interview session: {e}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="An error occurred during the interview session")
+    
+
+
+    
