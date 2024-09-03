@@ -9,11 +9,14 @@
     padding: 20px;
     font-size: 1.2em;
     line-height: 1.6;
+    margin-left: 1rem;
+    margin-right: 1rem;
   }
   
   .textContainer h2 {
     font-size: 2em;
     margin-bottom: 20px;
+
   }
   
   .gifContainer {
