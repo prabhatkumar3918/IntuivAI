@@ -1,6 +1,13 @@
 import { Backdrop } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
+import endCallIcon from "./assets/end-call-icon.png";
+import videoOnIcon from "./assets/video-on-icon.png";
+import videoOffIcon from "./assets/video-off-icon.png";
+import micOnIcon from "./assets/mic-on-icon.png";
+import micOffIcon from "./assets/mute.png";
+import volumeIcon from "./assets/volume-icon.png";
+import Navbar from "./Navbar/Navbar";
 
 // Specify the path to the worker script
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@2.15.349/build/pdf.worker.min.js`;
@@ -12,6 +19,8 @@ const VideoCallWithAI = () => {
   const [recognition, setRecognition] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const [devices, setDevices] = useState([]);
+  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
 
   useEffect(() => {
     // List devices and check for video input devices
@@ -22,7 +31,6 @@ const VideoCallWithAI = () => {
           (deviceInfo) => deviceInfo.kind === "videoinput"
         );
         if (videoDevices.length > 0) {
-          // Use the first video device
           startStream(videoDevices[0].deviceId);
         } else {
           console.error("No video input devices found.");
@@ -59,7 +67,7 @@ const VideoCallWithAI = () => {
         window.webkitSpeechRecognition)();
       recog.lang = "en-US";
       recog.interimResults = true;
-      recog.continuous = false; // Single interaction
+      recog.continuous = false;
 
       recog.onresult = (event) => {
         let transcript = "";
@@ -120,21 +128,49 @@ const VideoCallWithAI = () => {
     }
   };
 
+  const handleEndCall = () => {
+    console.log("Call ended.");
+    if (applicantVideoRef.current) {
+      const stream = applicantVideoRef.current.srcObject;
+      const tracks = stream.getTracks();
+      tracks.forEach((track) => track.stop());
+      applicantVideoRef.current.srcObject = null;
+    }
+  };
+
+  const handleToggleVideo = () => {
+    setIsVideoEnabled(!isVideoEnabled);
+    if (applicantVideoRef.current) {
+      const videoTracks = applicantVideoRef.current.srcObject.getVideoTracks();
+      videoTracks.forEach((track) => (track.enabled = !isVideoEnabled));
+    }
+  };
+
+  const handleToggleMute = () => {
+    setIsMuted(!isMuted);
+    if (applicantVideoRef.current) {
+      const audioTracks = applicantVideoRef.current.srcObject.getAudioTracks();
+      audioTracks.forEach((track) => (track.enabled = !isMuted));
+    }
+  };
+
   return (
     <div style={styles.container}>
       {/* Full screen video */}
       <div style={styles.videoContainer}>
+        <div style={styles.logo_text}>Intuiv.ai</div>
         {/* PDF Overlay */}
-        <div style={styles.pdfOverlay}>
-          <iframe
-            src="/CV_Himdyuti.pdf#toolbar=0&view=fitV" // Disable PDF toolbar and fit height
-            width="100%"
-            height="60vh"
-            style={styles.pdfIframe}
-            title="CV"
-
-            frameBorder="0"
-          ></iframe>
+        <div style={styles.backCV}>
+          <div style={styles.pdfOverlay}>
+            <iframe
+              src="/CV_Himdyuti.pdf#toolbar=0&view=fitV" // Disable PDF toolbar and fit height
+              width="100%"
+              height="60vh"
+              style={styles.pdfIframe}
+              title="CV"
+              frameBorder="0"
+            ></iframe>
+          </div>
         </div>
         <video
           ref={applicantVideoRef}
@@ -152,9 +188,7 @@ const VideoCallWithAI = () => {
         {/* AI Video Placeholder */}
         <div style={styles.aiVideoWrapper}>
           <div style={styles.placeholder}>
-            <div style={styles.aibot}>
-              AI BOT
-            </div>
+            <div style={styles.aibot}>AI BOT</div>
           </div>
         </div>
 
@@ -165,11 +199,32 @@ const VideoCallWithAI = () => {
             Your browser does not support the audio element.
           </audio>
         )}
-
-        {/* Button to toggle recording */}
-        <button onClick={handleToggleRecording} style={styles.button}>
+        <button onClick={handleToggleRecording} style={styles.hiddenButton}>
           {isRecording ? "Stop Listening" : "Start Listening"}
         </button>
+
+        <div style={styles.controlButtons}>
+          <button onClick={handleEndCall} style={styles.controlButton}>
+            <img src={endCallIcon} alt="End Call" style={styles.icon} />
+          </button>
+          <button onClick={handleToggleVideo} style={styles.controlButton}>
+            <img
+              src={isVideoEnabled ? videoOnIcon : videoOffIcon}
+              alt="Toggle Video"
+              style={styles.icon}
+            />
+          </button>
+          <button onClick={handleToggleMute} style={styles.controlButton}>
+            <img
+              src={isMuted ? micOffIcon : micOnIcon}
+              alt="Toggle Mute"
+              style={styles.icon}
+            />
+          </button>
+          <button style={styles.controlButton}>
+            <img src={volumeIcon} alt="Volume" style={styles.icon} />
+          </button>
+        </div>
       </div>
     </div>
   );
@@ -195,11 +250,11 @@ const styles = {
     position: "absolute",
     top: "10%",
     width: "30%",
+    
     marginLeft: "2rem",
     // height: "100%",
     // height: "max-content",
     backgroundColor: "transparent",
-    // backgroundColor: "rgba(255, 255, 255, 0.5)", // 50% transparency
     zIndex: 20, // Ensure the PDF overlay is above the video
     // filter: "brightness(1.5)",
     // transform: "scale(1.25)",
@@ -211,7 +266,7 @@ const styles = {
     height: "80vh",
     objectFit: "cover",
     opacity: "0.8",
-    filter:"brightness(1)",
+    filter: "brightness(1)",
   },
   aiVideoWrapper: {
     position: "absolute",
@@ -229,7 +284,7 @@ const styles = {
     color: "white",
     display: "flex",
     // justifyContent: "center",
-    alignItems: "end"
+    alignItems: "end",
   },
   subtitles: {
     position: "absolute",
@@ -256,13 +311,52 @@ const styles = {
     cursor: "pointer",
     zIndex: 40, // Ensure the button is always on top
   },
-  aibot:{
-    
+  aibot: {
     color: "white",
     fontSize: "20px",
     fontWeight: "bold",
-    marginLeft: "5%"
-  }
+    marginLeft: "5%",
+  },
+  hiddenButton: {
+    display: "none",
+  },
+  controlButtons: {
+    position: "absolute",
+    bottom: "10px",
+    left: "50%",
+    transform: "translateX(-50%)",
+    display: "flex",
+    justifyContent: "space-around",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    borderRadius: "10px",
+    padding: "5px",
+    width: "25%",
+
+    zIndex: 10,
+  },
+  controlButton: {
+    padding: "10px",
+    margin: "0 5px",
+    border: "none",
+    borderRadius: "50%",
+    cursor: "pointer",
+    backgroundColor: "transparent",
+    color: "#fff",
+  },
+  icon: {
+    width: "24px",
+    height: "24px",
+  },
+  logo_text: {
+    marginLeft: "2%",
+    marginTop: "1%",
+    backgroundColor: "transparent",
+    position: "absolute",
+    fontSize: "29px",
+    lineHeight: "1.4",
+    fontWeight: "bold",
+  },
 };
 
 export default VideoCallWithAI;
