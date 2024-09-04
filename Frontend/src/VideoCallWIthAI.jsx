@@ -1,5 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
+import endCallIcon from './assets/end-call-icon.png';
+import videoOnIcon from './assets/video-on-icon.png';
+import videoOffIcon from './assets/video-off-icon.png';
+import micOnIcon from './assets/mic-on-icon.png';
+import micOffIcon from './assets/mute.png';
+import volumeIcon from './assets/volume-icon.png';
 
 // Specify the path to the worker script
 pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@2.15.349/build/pdf.worker.min.js`;
@@ -11,14 +17,14 @@ const VideoCallWithAI = () => {
   const [recognition, setRecognition] = useState(null);
   const [isRecording, setIsRecording] = useState(false);
   const [devices, setDevices] = useState([]);
+  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
 
   useEffect(() => {
-    // List devices and check for video input devices
     navigator.mediaDevices.enumerateDevices()
       .then(deviceInfos => {
         const videoDevices = deviceInfos.filter(deviceInfo => deviceInfo.kind === 'videoinput');
         if (videoDevices.length > 0) {
-          // Use the first video device
           startStream(videoDevices[0].deviceId);
         } else {
           console.error('No video input devices found.');
@@ -53,7 +59,7 @@ const VideoCallWithAI = () => {
       const recog = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
       recog.lang = 'en-US';
       recog.interimResults = true;
-      recog.continuous = false; // Single interaction
+      recog.continuous = false;
 
       recog.onresult = event => {
         let transcript = '';
@@ -114,9 +120,34 @@ const VideoCallWithAI = () => {
     }
   };
 
+  const handleEndCall = () => {
+    console.log('Call ended.');
+    if (applicantVideoRef.current) {
+      const stream = applicantVideoRef.current.srcObject;
+      const tracks = stream.getTracks();
+      tracks.forEach(track => track.stop());
+      applicantVideoRef.current.srcObject = null;
+    }
+  };
+
+  const handleToggleVideo = () => {
+    setIsVideoEnabled(!isVideoEnabled);
+    if (applicantVideoRef.current) {
+      const videoTracks = applicantVideoRef.current.srcObject.getVideoTracks();
+      videoTracks.forEach(track => track.enabled = !isVideoEnabled);
+    }
+  };
+
+  const handleToggleMute = () => {
+    setIsMuted(!isMuted);
+    if (applicantVideoRef.current) {
+      const audioTracks = applicantVideoRef.current.srcObject.getAudioTracks();
+      audioTracks.forEach(track => track.enabled = !isMuted);
+    }
+  };
+
   return (
     <div style={styles.container}>
-      {/* Left 30%: PDF viewer for CV */}
       <div style={styles.pdfContainer}>
         <iframe
           src='/CV_Himdyuti.pdf'
@@ -128,18 +159,16 @@ const VideoCallWithAI = () => {
         ></iframe>
       </div>
 
-      {/* Right 70%: Video streams */}
       <div style={styles.videoContainer}>
         <div style={styles.applicantVideoWrapper}>
           <video
             ref={applicantVideoRef}
             style={styles.video}
             autoPlay
-            muted
+            muted={isMuted}
             playsInline
             onError={(e) => console.error('Error loading video:', e)}
           />
-          {/* Applicant subtitles */}
           {applicantSubtitles && (
             <div style={styles.subtitles}>
               {applicantSubtitles}
@@ -147,20 +176,32 @@ const VideoCallWithAI = () => {
           )}
         </div>
         <div style={styles.aiVideoWrapper}>
-          {/* Black placeholder for AI video */}
           <div style={styles.placeholder}></div>
         </div>
-        {/* Response audio player */}
         {responseAudio && (
           <audio controls>
             <source src={responseAudio} type="audio/mpeg" />
             Your browser does not support the audio element.
           </audio>
         )}
-        {/* Button to toggle recording */}
-        <button onClick={handleToggleRecording} style={styles.button}>
+        <button onClick={handleToggleRecording} style={styles.hiddenButton}>
           {isRecording ? 'Stop Listening' : 'Start Listening'}
         </button>
+
+        <div style={styles.controlButtons}>
+        <button onClick={handleEndCall} style={styles.controlButton}>
+          <img src={endCallIcon} alt="End Call" style={styles.icon} />
+        </button>
+        <button onClick={handleToggleVideo} style={styles.controlButton}>
+        <img src={isVideoEnabled ? videoOnIcon : videoOffIcon} alt="Toggle Video" style={styles.icon} />
+        </button>
+        <button onClick={handleToggleMute} style={styles.controlButton}>
+          <img src={isMuted ? micOffIcon : micOnIcon} alt="Toggle Mute" style={styles.icon} />
+        </button>
+        <button style={styles.controlButton}>
+        <img src={volumeIcon} alt="Volume" style={styles.icon} />
+        </button>
+        </div>
       </div>
     </div>
   );
@@ -211,7 +252,7 @@ const styles = {
     width: '20%',
     height: '20%',
     backgroundColor: '#000',
-    zIndex: 10, // Ensure the AI video is above other elements
+    zIndex: 10,
   },
   placeholder: {
     width: '100%',
@@ -228,18 +269,38 @@ const styles = {
     borderRadius: '5px',
     maxWidth: '90%',
     wordWrap: 'break-word',
-    zIndex: 5, // Ensure subtitles are visible on top of video
+    zIndex: 5,
   },
-  button: {
-    marginTop: '10px',
-    padding: '10px 20px',
-    fontSize: '16px',
-    backgroundColor: '#007bff',
-    color: '#fff',
+  hiddenButton: {
+    display: 'none',
+  },
+  controlButtons: {
+    position: 'absolute',
+    bottom: '10px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: '10px',
+    padding: '5px',
+    zIndex: 10,
+  },
+  controlButton: {
+    padding: '10px',
+    margin: '0 5px',
     border: 'none',
-    borderRadius: '5px',
+    borderRadius: '50%',
     cursor: 'pointer',
+    backgroundColor: 'transparent',
+    color: '#fff',
   },
+  icon: {
+    width: '24px',
+    height: '24px',
+  }
+  
 };
 
 export default VideoCallWithAI;
