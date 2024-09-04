@@ -65,7 +65,7 @@ const App = () => {
         />
         <Route 
           path="/video" 
-          element={isAuthenticated ? <LandingPage />  : <VideoCallWithAI />} 
+          element={isAuthenticated ? <VideoCallWithAI />: <LandingPage />} 
         />
       </Routes>
     </BrowserRouter>
