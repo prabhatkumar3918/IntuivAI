@@ -31,10 +31,8 @@
 }
 /* Container that holds the form */
 .formContainer {
-    width: 50%; /* Left half of the screen */
+    width: 50%; 
     display: flex;
-   /* background-image: url('../assets/Login-back.jpg');
-    background-size: cover;*/
     justify-content: center;
     align-items: center;
     padding: 20px;

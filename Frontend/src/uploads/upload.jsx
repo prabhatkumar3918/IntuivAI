@@ -5,9 +5,9 @@ import background from '../assets/Login-background.jpg'; // Background image pat
 const UploadForm = () => {
     const [cv, setCv] = useState(null);
     const [jobDescription, setJobDescription] = useState('');
-    const [numQuestions, setNumQuestions] = useState(5); // Default number of questions
-    const [difficulty, setDifficulty] = useState('Medium'); // Default difficulty level
-    const [interviewType, setInterviewType] = useState('CV Grilling'); // Default interview type
+    const [numQuestions, setNumQuestions] = useState(5); 
+    const [difficulty, setDifficulty] = useState('Medium'); 
+    const [interviewType, setInterviewType] = useState('CV Grilling'); 
 
     const handleCvChange = (e) => {
         setCv(URL.createObjectURL(e.target.files[0]));
