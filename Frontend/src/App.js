@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import LandingPage from "./LandingPage";
 import Login from "./Login/Login";
 import Signup from "./SignUp/Signup";
+import UploadForm from "./uploads/upload";
 import axios from "axios";
 
 
@@ -62,6 +63,10 @@ const App = () => {
         <Route 
           path="/dashboard" 
           element={isAuthenticated ? <LandingPage />  : <Navigate to="/login" />} 
+        />
+        <Route 
+          path="/upload" 
+          element={<UploadForm />} 
         />
       </Routes>
     </BrowserRouter>
