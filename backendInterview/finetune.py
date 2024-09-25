@@ -52,7 +52,8 @@ def create_prompt(examples, input_question, input_answer):
         prompt += f"Answer: {example['answer']}\n"
         prompt += f"Follow-up Question: {example['follow_up']}\n\n"
     
-    prompt += "Now, given the following question and answer, generate a relevant follow-up question:\n\n"
+    prompt += '''Now, given the following question and answer, generate a relevant follow-up question. Add human touch to it such as if the response is correct and you 
+    need further clarification. You can say okay,great and then the follow-up question. Similarly you can use other things as well to make it sound natural:\n\n'''
     prompt += f"Question: {input_question}\n"
     prompt += f"Answer: {input_answer}\n"
     prompt += "Follow-up Question:"

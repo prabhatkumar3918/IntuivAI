@@ -1,0 +1,125 @@
+/* General styles for page container */
+.pageContainer {
+    font-family: 'Arial', sans-serif;
+    color: #ffffff;
+    background-color: #141414;
+    padding: 0;
+    margin: 0;
+  }
+  
+  /* Navbar */
+  .navbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #000000;
+  }
+  
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #00ffcc;
+    margin-top: 10px;
+  }
+  
+  .navLinks {
+    display: flex;
+    list-style: none;
+    gap: 20px;
+  }
+  
+  .navLinks li {
+    cursor: pointer;
+  }
+  
+  .profileButton {
+    width: 40px; /* Set desired width */
+    height: 20px; /* Set desired height */
+    padding: 8px 16px; /* Adjust padding if necessary */
+    background-color: #141414;
+    border: 1px solid #ffffff;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center; /* Center content vertically */
+    justify-content: center; /* Center content horizontally */
+    text-align: center; /* Center text */
+    
+  }
+  
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    padding: 50px;
+    background-color: #1a1a1a;
+    align-items: center;
+    height:250px;
+  }
+  
+  .leftContent {
+    max-width: 50%;
+  }
+  
+  .welcomeContainer {
+    margin-bottom: 0px; /* Reduce the space between welcome message and title */
+  }
+  
+  .welcomeMessage h2 {
+    font-size: 24px; /* Adjust size to match your design */ /* Accent color to make it stand out */
+    margin-bottom: 0px; /* Space between heading and subtext */
+  }
+
+  .title {
+    font-size: 48px;
+    line-height: 1.2;
+    margin-top: 0px;
+  }
+  
+  .future {
+    color: #00ffcc;
+    font-weight: bold;
+  }
+  
+  .subtext {
+    margin-top: 10px;
+    font-size: 18px;
+    color: #cccccc;
+  }
+  
+
+  /* GIF Container with 3D Semicircle */
+  .gifContainer {
+    position: relative;
+    perspective: 800px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+  }
+  
+  .gif {
+    position: absolute;
+    /* Increased size */
+    border-radius: 10px;
+  }
+  
+  /* Individual GIF positions */
+  .gif1 {
+    width: 200px; /* Increased size */
+    height: 200px;
+    transform: rotateY(-40deg) translateZ(275px); /* Adjusted translateZ for larger size */
+  }
+  
+  .gif2 {
+    width: 210px; /* Increased size */
+    height: 210px;
+    transform: rotateY(0deg) translateZ(250px); /* Adjusted translateZ for larger size */
+  }
+  
+  .gif3 {
+    width: 200px; /* Increased size */
+    height: 200px;
+    transform: rotateY(40deg) translateZ(275px); /* Adjusted translateZ for larger size */
+  }
+  

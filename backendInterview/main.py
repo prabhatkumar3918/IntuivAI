@@ -66,6 +66,14 @@ class InterviewRequest(BaseModel):
     user_id: str
     cv_path: str
     job_description: str
+    
+class UploadData(BaseModel):
+    user_id: str
+    cv_path: str
+    job_description: str
+    num_questions: int
+    difficulty: str
+    interview_type: str
 
 class InterviewApp:
     def __init__(self):
@@ -207,7 +215,60 @@ def run_interview(request: InterviewRequest, current_user: User = Depends(get_cu
     except Exception as e:
         logger.error(f"Error during interview session: {e}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="An error occurred during the interview session")
-    
 
+@app.post("/upload")
+def upload_data(data: UploadData, token: str = Depends(oauth2_scheme)):
+    try:
+        # @Verify the user using the token
+        credentials_exception = HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Could not validate credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+        user = verify_token(token, credentials_exception)
 
-    
+        if not user:
+            raise credentials_exception
+
+        # Prepare the upload info
+        upload_info = {
+            "user_id": data.user_id,
+            "cv_path": data.cv_path,
+            "job_description": data.job_description,
+            "num_questions": data.num_questions,
+            "difficulty": data.difficulty,
+            "interview_type": data.interview_type,
+            "upload_time": str(uuid.uuid4())  # Generate a unique identifier for the upload
+        }
+
+        # Check if a record for this user already exists in the database
+        existing_record = db["uploads"].find_one({"user_id": data.user_id})
+
+        if existing_record:
+            # If data exists, update it
+            update_result = db["uploads"].update_one(
+                {"user_id": data.user_id},  # Find the document with this user_id
+                {"$set": upload_info}  # Update the document with the new data
+            )
+
+            if update_result.modified_count == 0:
+                raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to update data")
+
+            logger.info(f"Data updated successfully for user with ID: {existing_record['_id']}")
+            return {"message": "Data updated successfully", "upload_id": str(existing_record['_id'])}
+
+        else:
+            # If no existing record, insert a new one
+            result = db["uploads"].insert_one(upload_info)
+
+            if not result.inserted_id:
+                raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Failed to store data")
+
+            logger.info(f"Data uploaded and stored successfully for user with ID: {result.inserted_id}")
+            return {"message": "Data uploaded successfully", "upload_id": str(result.inserted_id)}
+
+    except HTTPException as e:
+        raise e
+    except Exception as e:
+        logger.error(f"Error occurred during data upload: {e}")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="An error occurred during the data upload process")

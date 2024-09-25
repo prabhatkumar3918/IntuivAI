@@ -34,7 +34,7 @@ class LLMProcessor:
         Your questions (only the questions, no additional text or remarks):
         """
 
-        prompt = f"Generate {num_questions} different questions based on the CV and job description.\n{template}\nFormat your response as:\n1. Question one\n2. Question two\n... and so on."
+        prompt = f"Generate {num_questions} different questions based on the CV and job description.\n{template}\nFormat your response as:\nQuestion one\n Question two\n... and so on."
         
         # Call the LLM to generate the questions
         response = self.llm(prompt)

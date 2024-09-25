@@ -4,6 +4,7 @@ import LandingPage from "./LandingPage";
 import Login from "./Login/Login";
 import Signup from "./SignUp/Signup";
 import UploadForm from "./uploads/upload";
+import HomePage from "./Home/home";
 import axios from "axios";
 
 
@@ -67,6 +68,10 @@ const App = () => {
         <Route 
           path="/upload" 
           element={<UploadForm />} 
+        />
+        <Route 
+          path="/home" 
+          element={<HomePage />} 
         />
       </Routes>
     </BrowserRouter>
